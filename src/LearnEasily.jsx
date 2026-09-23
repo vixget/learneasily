@@ -468,7 +468,14 @@ export default function LearnEasily() {
     if (file && file.type === "application/pdf") setPdfFile(file);
   };
   const handleFileChange = (e) => {
-    if (e.target.files[0]) setPdfFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError("PDF is too large. Please use a file under 5MB.");
+        return;
+      }
+      setPdfFile(file);
+    }
   };
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
