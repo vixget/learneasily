@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const COLORS = {
   bg: "#F0F7FF",
@@ -543,7 +543,7 @@ export default function LearnEasily() {
       return m;
     });
 
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
+    const res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
