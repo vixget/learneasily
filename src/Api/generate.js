@@ -3,7 +3,9 @@ export const config = {
     bodyParser: {
       sizeLimit: "10mb",
     },
+    responseLimit: false,
   },
+  maxDuration: 60,
 };
 
 export default async function handler(req, res) {
@@ -25,6 +27,11 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify(req.body),
     });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      return res.status(response.status).json({ error: errText });
+    }
 
     const data = await response.json();
     return res.status(200).json(data);
