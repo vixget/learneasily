@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 const COLORS = {
   bg: "#F0F7FF",
