@@ -619,12 +619,23 @@ export default function LearnEasily() {
         color: COLORS.text,
       }}
     >
+      <style>{`
+        @media (max-width: 700px) {
+          .main-grid { grid-template-columns: 1fr !important; }
+          .nav-links { display: none !important; }
+          .hero h1 { font-size: 28px !important; }
+          .hero p { font-size: 14px !important; }
+          .pricing-grid { grid-template-columns: 1fr !important; }
+          .how-grid { flex-direction: column !important; }
+        }
+      `}</style>
+
       {/* NAV */}
       <nav
         style={{
           background: COLORS.white,
           borderBottom: `1px solid ${COLORS.border}`,
-          padding: "0 32px",
+          padding: "0 20px",
           height: 60,
           display: "flex",
           alignItems: "center",
@@ -661,7 +672,10 @@ export default function LearnEasily() {
             Learn<span style={{ color: COLORS.text }}>Easily</span>
           </span>
         </div>
-        <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
+        <div
+          className="nav-links"
+          style={{ display: "flex", gap: 24, alignItems: "center" }}
+        >
           {["How it works", "Pricing"].map((item) => (
             <a
               key={item}
@@ -691,13 +705,29 @@ export default function LearnEasily() {
             Get started
           </button>
         </div>
+        <button
+          className="mobile-cta"
+          style={{
+            background: COLORS.accent,
+            color: COLORS.white,
+            border: "none",
+            borderRadius: 8,
+            padding: "8px 16px",
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          Get started
+        </button>
       </nav>
 
       {/* HERO */}
       <div
+        className="hero"
         style={{
           textAlign: "center",
-          padding: "60px 24px 40px",
+          padding: "48px 20px 32px",
           maxWidth: 640,
           margin: "0 auto",
         }}
@@ -711,14 +741,14 @@ export default function LearnEasily() {
             padding: "5px 14px",
             fontSize: 12,
             fontWeight: 600,
-            marginBottom: 18,
+            marginBottom: 16,
           }}
         >
           AI-powered study tool · For every student
         </div>
         <h1
           style={{
-            fontSize: 38,
+            fontSize: 36,
             fontWeight: 800,
             lineHeight: 1.2,
             color: COLORS.text,
@@ -735,7 +765,7 @@ export default function LearnEasily() {
             color: COLORS.muted,
             lineHeight: 1.7,
             maxWidth: 480,
-            margin: "0 auto 32px",
+            margin: "0 auto 28px",
           }}
         >
           Turn any learning unit into simplified notes and visual flow maps —
@@ -746,13 +776,14 @@ export default function LearnEasily() {
 
       {/* MAIN */}
       <div
+        className="main-grid"
         style={{
           maxWidth: 920,
           margin: "0 auto",
-          padding: "0 24px 60px",
+          padding: "0 20px 60px",
           display: "grid",
           gridTemplateColumns: "1fr 1.4fr",
-          gap: 24,
+          gap: 20,
           alignItems: "start",
         }}
       >
@@ -761,7 +792,7 @@ export default function LearnEasily() {
           style={{
             background: COLORS.white,
             borderRadius: 20,
-            padding: 28,
+            padding: 24,
             boxShadow: "0 2px 16px rgba(37,99,235,0.07)",
           }}
         >
@@ -823,12 +854,12 @@ export default function LearnEasily() {
                     border: `2px dashed ${dragging ? COLORS.accent : COLORS.border}`,
                     background: dragging ? COLORS.accentLight : COLORS.bg,
                     borderRadius: 14,
-                    padding: "28px 20px",
+                    padding: "24px 16px",
                     textAlign: "center",
                     transition: "all 0.2s",
                   }}
                 >
-                  <div style={{ fontSize: 32, marginBottom: 8 }}>
+                  <div style={{ fontSize: 28, marginBottom: 8 }}>
                     {pdfFile ? "✅" : "📄"}
                   </div>
                   {pdfFile ? (
@@ -1001,11 +1032,11 @@ export default function LearnEasily() {
                       border: `2px dashed ${COLORS.border}`,
                       background: COLORS.bg,
                       borderRadius: 14,
-                      padding: "28px 20px",
+                      padding: "24px 16px",
                       textAlign: "center",
                     }}
                   >
-                    <div style={{ fontSize: 32, marginBottom: 8 }}>📸</div>
+                    <div style={{ fontSize: 28, marginBottom: 8 }}>📸</div>
                     <p
                       style={{
                         fontSize: 13,
@@ -1064,7 +1095,7 @@ export default function LearnEasily() {
             </>
           )}
 
-          <div style={{ marginTop: 18 }}>
+          <div style={{ marginTop: 16 }}>
             <p style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
               What do you want?
             </p>
@@ -1198,9 +1229,9 @@ export default function LearnEasily() {
           style={{
             background: COLORS.white,
             borderRadius: 20,
-            padding: 28,
+            padding: 24,
             boxShadow: "0 2px 16px rgba(37,99,235,0.07)",
-            minHeight: 500,
+            minHeight: 480,
             position: "relative",
           }}
         >
@@ -1247,7 +1278,7 @@ export default function LearnEasily() {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                minHeight: 380,
+                minHeight: 360,
                 textAlign: "center",
               }}
             >
@@ -1330,7 +1361,7 @@ export default function LearnEasily() {
         style={{
           background: COLORS.white,
           borderTop: `1px solid ${COLORS.border}`,
-          padding: "56px 24px",
+          padding: "48px 20px",
           textAlign: "center",
         }}
       >
@@ -1341,11 +1372,12 @@ export default function LearnEasily() {
           Upload. Generate. Study.
         </p>
         <div
+          className="how-grid"
           style={{
             display: "flex",
             gap: 20,
             justifyContent: "center",
-            maxWidth: 760,
+            maxWidth: 700,
             margin: "0 auto",
             flexWrap: "wrap",
           }}
@@ -1357,11 +1389,6 @@ export default function LearnEasily() {
               desc: "Drop in a PDF or snap up to 8 textbook photos — any subject, any grade",
             },
             {
-              icon: "⚡",
-              title: "AI reads it",
-              desc: "LearnEasily analyses and simplifies the content in seconds",
-            },
-            {
               icon: "🎓",
               title: "Get your notes",
               desc: "Plain language notes and a visual flow map, ready to study",
@@ -1370,7 +1397,7 @@ export default function LearnEasily() {
             <div
               key={item.title}
               style={{
-                flex: "1 1 180px",
+                flex: "1 1 200px",
                 background: COLORS.bg,
                 borderRadius: 16,
                 padding: "24px 18px",
@@ -1399,19 +1426,20 @@ export default function LearnEasily() {
       <div
         id="pricing"
         style={{
-          padding: "56px 24px",
+          padding: "48px 20px",
           textAlign: "center",
           maxWidth: 680,
           margin: "0 auto",
         }}
       >
         <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 8 }}>
-          Simple pricing
+          Affordable pricing
         </h2>
         <p style={{ fontSize: 13, color: COLORS.muted, marginBottom: 36 }}>
           PDF or photos — same price. Pay per session or go unlimited.
         </p>
         <div
+          className="pricing-grid"
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}
         >
           {[
@@ -1433,7 +1461,7 @@ export default function LearnEasily() {
               name: "Unlimited",
               price: "R249",
               per: "per month",
-              desc: "Unlimited sessions, all features. For serious students.",
+              desc: "Unlimited sessions, all features included.",
               features: [
                 "Unlimited sessions",
                 "Notes + flow maps",
@@ -1568,7 +1596,7 @@ export default function LearnEasily() {
         style={{
           background: COLORS.white,
           borderTop: `1px solid ${COLORS.border}`,
-          padding: "20px 32px",
+          padding: "20px 20px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
