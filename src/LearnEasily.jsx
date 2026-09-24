@@ -96,43 +96,25 @@ function parseNotes(text) {
 
 function FlowMap({ data, locked }) {
   if (!data || !data.nodes) return null;
-
-  const nodeMap = {};
-  data.nodes.forEach((n) => {
-    nodeMap[n.id] = n;
-  });
-
-  // Simple vertical tree layout
   const rootNodes = data.nodes.filter(
     (n) => !data.edges.some((e) => e.to === n.id),
   );
   const branchNodes = data.nodes.filter((n) => n.type === "branch");
   const leafNodes = data.nodes.filter((n) => n.type === "leaf");
-
   const W = 560,
     H = 420;
   const positions = {};
-
-  // Root
-  rootNodes.forEach((n, i) => {
+  rootNodes.forEach((n) => {
     positions[n.id] = { x: W / 2, y: 40 };
   });
-
-  // Branches
   branchNodes.forEach((n, i) => {
-    const total = branchNodes.length;
-    positions[n.id] = { x: (W / (total + 1)) * (i + 1), y: 150 };
+    positions[n.id] = { x: (W / (branchNodes.length + 1)) * (i + 1), y: 150 };
   });
-
-  // Leaves
   leafNodes.forEach((n, i) => {
-    const total = leafNodes.length;
-    positions[n.id] = { x: (W / (total + 1)) * (i + 1), y: 280 };
+    positions[n.id] = { x: (W / (leafNodes.length + 1)) * (i + 1), y: 280 };
   });
-
   const nodeColor = { root: COLORS.accent, branch: "#3B82F6", leaf: "#93C5FD" };
   const textColor = { root: "#fff", branch: "#fff", leaf: COLORS.text };
-
   return (
     <div style={{ position: "relative" }}>
       <svg
@@ -140,7 +122,6 @@ function FlowMap({ data, locked }) {
         viewBox={`0 0 ${W} ${H}`}
         style={{ overflow: "visible" }}
       >
-        {/* Edges */}
         {data.edges.map((e, i) => {
           const from = positions[e.from];
           const to = positions[e.to];
@@ -158,20 +139,18 @@ function FlowMap({ data, locked }) {
             />
           );
         })}
-        {/* Nodes */}
         {data.nodes.map((n, i) => {
           const pos = positions[n.id];
           if (!pos) return null;
           const isLocked = locked && i >= 3;
           const w = n.type === "root" ? 160 : n.type === "branch" ? 130 : 110;
-          const h = 38;
           return (
             <g key={n.id} style={{ filter: isLocked ? "blur(3px)" : "none" }}>
               <rect
                 x={pos.x - w / 2}
-                y={pos.y - h / 2}
+                y={pos.y - 19}
                 width={w}
-                height={h}
+                height={38}
                 rx="10"
                 fill={
                   isLocked ? COLORS.border : nodeColor[n.type] || COLORS.accent
@@ -203,7 +182,6 @@ function NotesView({ notes, locked }) {
   if (!notes) return null;
   return (
     <div>
-      {/* Title */}
       <div
         style={{
           background: COLORS.accent,
@@ -223,8 +201,6 @@ function NotesView({ notes, locked }) {
           {notes.title}
         </h3>
       </div>
-
-      {/* Sections */}
       {(notes.sections || []).map((s, i) => {
         const isLocked = locked && i >= 1;
         return (
@@ -286,8 +262,6 @@ function NotesView({ notes, locked }) {
           </div>
         );
       })}
-
-      {/* Key Terms — only when unlocked */}
       {!locked && notes.keyTerms && notes.keyTerms.length > 0 && (
         <div
           style={{
@@ -328,8 +302,6 @@ function NotesView({ notes, locked }) {
           ))}
         </div>
       )}
-
-      {/* Exam Tip — only when unlocked */}
       {!locked && notes.examTip && (
         <div
           style={{
@@ -359,6 +331,27 @@ function NotesView({ notes, locked }) {
 }
 
 function PaywallOverlay() {
+  const [payLoading, setPayLoading] = useState(false);
+
+  const handlePayment = async (plan) => {
+    setPayLoading(true);
+    try {
+      const res = await fetch("/api/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan }),
+      });
+      const data = await res.json();
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      }
+    } catch (e) {
+      alert("Payment failed. Please try again.");
+    } finally {
+      setPayLoading(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -404,6 +397,8 @@ function PaywallOverlay() {
         downloads.
       </p>
       <button
+        onClick={() => handlePayment("session")}
+        disabled={payLoading}
         style={{
           width: "100%",
           background: COLORS.accent,
@@ -417,9 +412,11 @@ function PaywallOverlay() {
           marginBottom: 8,
         }}
       >
-        Pay R29 for this session
+        {payLoading ? "Loading..." : "Pay R29 for this session"}
       </button>
       <button
+        onClick={() => handlePayment("unlimited")}
+        disabled={payLoading}
         style={{
           width: "100%",
           background: COLORS.white,
@@ -432,7 +429,7 @@ function PaywallOverlay() {
           cursor: "pointer",
         }}
       >
-        R249/month — Unlimited
+        {payLoading ? "Loading..." : "R249/month — Unlimited"}
       </button>
       <p style={{ fontSize: 11, color: COLORS.muted, marginTop: 10 }}>
         🔐 Secured by PayFast
@@ -479,13 +476,11 @@ export default function LearnEasily() {
   };
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
-    const remaining = 8 - photos.length;
-    const newFiles = files.slice(0, remaining);
-    const newPhotos = newFiles.map((f) => ({
-      name: f.name,
-      url: URL.createObjectURL(f),
-    }));
-    setPhotos((prev) => [...prev, ...newPhotos]);
+    const newFiles = files.slice(0, 8 - photos.length);
+    setPhotos((prev) => [
+      ...prev,
+      ...newFiles.map((f) => ({ name: f.name, url: URL.createObjectURL(f) })),
+    ]);
     setPhotoFiles((prev) => [...prev, ...newFiles]);
   };
   const removePhoto = (idx) => {
@@ -518,10 +513,13 @@ export default function LearnEasily() {
       const imageParts = await Promise.all(
         photoFiles.map(async (f) => {
           const b64 = await fileToBase64(f);
-          const mt = f.type === "image/png" ? "image/png" : "image/jpeg";
           return {
             type: "image",
-            source: { type: "base64", media_type: mt, data: b64 },
+            source: {
+              type: "base64",
+              media_type: f.type === "image/png" ? "image/png" : "image/jpeg",
+              data: b64,
+            },
           };
         }),
       );
@@ -538,7 +536,6 @@ export default function LearnEasily() {
   };
 
   const callAPI = async (userPrompt, fileMessages) => {
-    // Combine file content with the instruction prompt
     const messages = fileMessages.map((m, i) => {
       if (i === 0) {
         const content = Array.isArray(m.content) ? m.content : [m.content];
@@ -549,7 +546,6 @@ export default function LearnEasily() {
       }
       return m;
     });
-
     const res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -576,10 +572,8 @@ export default function LearnEasily() {
     setNotes(null);
     setFlowData(null);
     setStage("upload");
-
     try {
       const fileMessages = await buildMessages();
-
       if (outputMode === "notes" || outputMode === "both") {
         setLoadingMsg("Reading your material...");
         const notesRaw = await callAPI(NOTES_PROMPT, fileMessages);
@@ -588,18 +582,15 @@ export default function LearnEasily() {
           throw new Error("Could not parse notes. Please try again.");
         setNotes(parsed);
       }
-
       if (outputMode === "flowmap" || outputMode === "both") {
         setLoadingMsg("Building your flow map...");
         const flowRaw = await callAPI(FLOWMAP_PROMPT, fileMessages);
         try {
-          const clean = flowRaw.replace(/```json|```/g, "").trim();
-          setFlowData(JSON.parse(clean));
+          setFlowData(JSON.parse(flowRaw.replace(/```json|```/g, "").trim()));
         } catch {
           setFlowData(null);
         }
       }
-
       setStage("generated");
       setActiveTab(outputMode === "flowmap" ? "flowmap" : "notes");
     } catch (e) {
@@ -630,7 +621,6 @@ export default function LearnEasily() {
         color: COLORS.text,
       }}
     >
-      {/* NAV */}
       <nav
         style={{
           background: COLORS.white,
@@ -704,7 +694,6 @@ export default function LearnEasily() {
         </div>
       </nav>
 
-      {/* HERO */}
       <div
         style={{
           textAlign: "center",
@@ -755,7 +744,6 @@ export default function LearnEasily() {
         </p>
       </div>
 
-      {/* MAIN */}
       <div
         style={{
           maxWidth: 920,
@@ -767,7 +755,6 @@ export default function LearnEasily() {
           alignItems: "start",
         }}
       >
-        {/* LEFT */}
         <div
           style={{
             background: COLORS.white,
@@ -779,7 +766,6 @@ export default function LearnEasily() {
           <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 16 }}>
             Upload your material
           </h2>
-
           <div
             style={{
               display: "flex",
@@ -1205,7 +1191,6 @@ export default function LearnEasily() {
           )}
         </div>
 
-        {/* RIGHT */}
         <div
           style={{
             background: COLORS.white,
@@ -1336,7 +1321,6 @@ export default function LearnEasily() {
         </div>
       </div>
 
-      {/* HOW IT WORKS */}
       <div
         id="how-it-works"
         style={{
@@ -1407,7 +1391,6 @@ export default function LearnEasily() {
         </div>
       </div>
 
-      {/* PRICING */}
       <div
         id="pricing"
         style={{
@@ -1439,6 +1422,7 @@ export default function LearnEasily() {
                 "PDF or photo upload",
               ],
               accent: false,
+              plan: "session",
             },
             {
               name: "Unlimited",
@@ -1453,6 +1437,7 @@ export default function LearnEasily() {
                 "Priority processing",
               ],
               accent: true,
+              plan: "unlimited",
             },
           ].map((plan) => (
             <div
@@ -1544,6 +1529,15 @@ export default function LearnEasily() {
                 </div>
               ))}
               <button
+                onClick={async () => {
+                  const res = await fetch("/api/payment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ plan: plan.plan }),
+                  });
+                  const data = await res.json();
+                  if (data.paymentUrl) window.location.href = data.paymentUrl;
+                }}
                 style={{
                   width: "100%",
                   marginTop: 16,
@@ -1564,7 +1558,6 @@ export default function LearnEasily() {
         </div>
       </div>
 
-      {/* FOOTER */}
       <div
         style={{
           background: COLORS.white,
