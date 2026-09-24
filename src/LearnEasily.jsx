@@ -342,9 +342,7 @@ function PaywallOverlay() {
         body: JSON.stringify({ plan }),
       });
       const data = await res.json();
-      if (data.paymentUrl) {
-        window.location.href = data.paymentUrl;
-      }
+      if (data.paymentUrl) window.location.href = data.paymentUrl;
     } catch (e) {
       alert("Payment failed. Please try again.");
     } finally {
@@ -621,6 +619,7 @@ export default function LearnEasily() {
         color: COLORS.text,
       }}
     >
+      {/* NAV */}
       <nav
         style={{
           background: COLORS.white,
@@ -694,6 +693,7 @@ export default function LearnEasily() {
         </div>
       </nav>
 
+      {/* HERO */}
       <div
         style={{
           textAlign: "center",
@@ -726,9 +726,8 @@ export default function LearnEasily() {
             letterSpacing: "-1px",
           }}
         >
-          Turn any learning unit into{" "}
-          <span style={{ color: COLORS.accent }}>simplified notes</span> &amp;
-          flow maps
+          Overwhelmed by your textbook?{" "}
+          <span style={{ color: COLORS.accent }}>We've got you.</span>
         </h1>
         <p
           style={{
@@ -739,11 +738,13 @@ export default function LearnEasily() {
             margin: "0 auto 32px",
           }}
         >
-          Upload a PDF or snap photos of your textbook. LearnEasily breaks it
-          down instantly — high school to university, any subject.
+          Turn any learning unit into simplified notes and visual flow maps —
+          instantly. Upload a PDF or snap photos and LearnEasily breaks it all
+          down for you.
         </p>
       </div>
 
+      {/* MAIN */}
       <div
         style={{
           maxWidth: 920,
@@ -755,6 +756,7 @@ export default function LearnEasily() {
           alignItems: "start",
         }}
       >
+        {/* LEFT */}
         <div
           style={{
             background: COLORS.white,
@@ -1191,6 +1193,7 @@ export default function LearnEasily() {
           )}
         </div>
 
+        {/* RIGHT */}
         <div
           style={{
             background: COLORS.white,
@@ -1321,6 +1324,7 @@ export default function LearnEasily() {
         </div>
       </div>
 
+      {/* HOW IT WORKS */}
       <div
         id="how-it-works"
         style={{
@@ -1391,6 +1395,7 @@ export default function LearnEasily() {
         </div>
       </div>
 
+      {/* PRICING */}
       <div
         id="pricing"
         style={{
@@ -1558,6 +1563,7 @@ export default function LearnEasily() {
         </div>
       </div>
 
+      {/* FOOTER */}
       <div
         style={{
           background: COLORS.white,
